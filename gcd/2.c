@@ -2,13 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct {
-  long *data;
-  long size;
-  long capacity;
-} IntArray;
-
 typedef unsigned long long int u64;
+
+typedef struct {
+  u64 *data;
+  u64 size;
+  u64 capacity;
+} IntArray;
 
 // Global sieve cache
 static bool *cached_sieve = NULL;
@@ -16,14 +16,16 @@ static u64 cached_size = 0;
 
 void ensure_sieve(u64 n) {
   if (cached_sieve == NULL || cached_size < n) {
-    if (cached_sieve) free(cached_sieve);
-    
+    if (cached_sieve)
+      free(cached_sieve);
+    printf("[cache] Resizing from %llu to %llu\n", cached_size, n);
+
     cached_size = n;
     cached_sieve = calloc(n + 1, sizeof(bool));
-    
+
     for (u64 i = 2; i <= n; i++)
       cached_sieve[i] = true;
-    
+
     for (u64 i = 2; i * i <= n; i++) {
       if (cached_sieve[i]) {
         for (u64 j = i * i; j <= n; j += i) {
@@ -75,7 +77,7 @@ IntArray findCommon(IntArray a, IntArray b) {
   IntArray result = createArray(32);
 
   // Simple approach: for each element in a, find it in b and remove it
-  bool *used = calloc(b.size, sizeof(bool));
+  u64 *used = calloc(b.size, sizeof(u64));
 
   for (u64 i = 0; i < a.size; i++) {
     for (u64 j = 0; j < b.size; j++) {
@@ -147,7 +149,8 @@ int main() {
          gcd(841818235337, 767318488245));
   printf("gcd(953525754641,658518571823) = %llu\n",
          gcd(953525754641, 658518571823));
-  
-  if (cached_sieve) free(cached_sieve);
+
+  if (cached_sieve)
+    free(cached_sieve);
   return 0;
 }
