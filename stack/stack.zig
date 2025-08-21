@@ -33,7 +33,6 @@ pub fn Stack(comptime T: type) type {
             if (self.size >= self.capacity) {
                 self.capacity *= 2;
                 self.items = self.allocator.realloc(self.items, self.capacity);
-                // no resizing because im too lazy
             }
             self.items[self.size] = item;
             self.size += 1;
