@@ -1,0 +1,22 @@
+{
+  "configurations": [
+    {
+      "type": "swift",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:alg}/tree",
+      "name": "Debug alg (tree)",
+      "program": "${workspaceFolder:alg}/tree/.build/debug/alg",
+      "preLaunchTask": "swift: Build Debug alg (tree)"
+    },
+    {
+      "type": "swift",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:alg}/tree",
+      "name": "Release alg (tree)",
+      "program": "${workspaceFolder:alg}/tree/.build/release/alg",
+      "preLaunchTask": "swift: Build Release alg (tree)"
+    }
+  ]
+}
