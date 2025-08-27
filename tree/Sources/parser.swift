@@ -6,13 +6,15 @@ func getPriority(_ symbol: SymbolType) -> (Int, Int) {
   // this look curse af, i shuold have just use rust
   return switch symbol {
   case .plus, .minus:
-    (11, 10)
+    (10, 11)
   case .slash, .star:
-    (21, 20)
+    (20, 21)
   default:
-    (0, 0)
+    fatalError()
   }
 }
+
+//(10-2) * 8 / (3+1) + 5
 
 class Parser {
   var tokens: [Token]
@@ -22,6 +24,7 @@ class Parser {
   }
 
   func parse(priority: Int = 0) -> Result<Expression, ParseError> {
+    // print("Enter with \(tokens.last)")
     var lhs = Expression.number("0")
 
     switch tokens.popLast() {
@@ -30,7 +33,7 @@ class Parser {
     case .symbol(let s):
       var expression: Expression!
       // arggghhhh, i want rustttttttt
-      switch parse() {
+      switch parse(priority: 0) {
       case .failure(let e):
         return .failure(e)
       case .success(let e):
@@ -41,6 +44,7 @@ class Parser {
       case .leftParentheses:
         // lhs = .grouping(expression)
         lhs = expression
+        _ = tokens.popLast()
       case let op where op == .minus || op == .plus:
         lhs = .unary(op, expression)
       default:
@@ -51,14 +55,17 @@ class Parser {
       return .failure(.invalidToken)
     }
 
+    // print(lhs)
+
     // default: "1 + 8 * 9"
     // "8 * 9 + 1"
+    // (10-2) * 8 / (3+1) + 5
     while true {
       if tokens.isEmpty {
-        return .success(lhs)
+        break
       }
 
-      guard case let .symbol(op) = tokens.popLast() else {
+      guard case let .symbol(op) = tokens.last else {
         return .failure(.invalidToken)
       }
 
@@ -66,18 +73,22 @@ class Parser {
         break
       }
 
-      if getPriority(op).1 < priority {
-        tokens.append(.symbol(op))
+      let p = getPriority(op)
+
+      if priority > p.0 {
         break
       }
 
-      guard case let .success(rhs) = parse(priority: getPriority(op).0) else {
+      _ = tokens.popLast()
+
+      guard case let .success(rhs) = parse(priority: p.1) else {
         return .failure(.invalidToken)
       }
 
       lhs = .binary(op, lhs, rhs)
     }
 
+    // print("Exit with \(lhs.asInOrderString())")
     return .success(lhs)
   }
 }

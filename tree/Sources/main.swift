@@ -4,8 +4,14 @@
 // let input = "8 * 9 + 1"
 // [8, "*", 9, "+", 1]
 
-// let input = "5 + 3 - 2"
-let input = "2.5 + 3 * -(4 - 2)"
+// let input = "(10-2) * 8 / (3+1) + 5"
+// let input = "8 / (3 + 1) + 5"
+// let input = "8 / 4 + 5"
+// let input = "8 / (3 + 1) + 5"
+// let input = "2.5 + 3 * -(4 - 2)"
+// let input = "(10-2) * 8 / (3+1) + 5"
+// 10 - ( 2 * (8 / (3 + (1 + 4))))
+let input = readLine() ?? "0"
 
 let lexer = Lexer(input: input)
 let tokens = try lexer.lex().get()
