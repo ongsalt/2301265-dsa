@@ -81,8 +81,8 @@ fn brute_force(entries: Vec<Entry>, k: usize) -> (u64, u64) {
     dfs(entries, k)
 }
 
-fn greedy(entries: Vec<Entry>, k: usize) -> u64 {
-    let mut entries = entries.clone();
+fn greedy(entries: &Vec<Entry>, k: usize) -> u64 {
+    let mut entries: Vec<Entry> = entries.clone();
     let mut count = 0;
     let len = entries.len();
 
@@ -112,20 +112,27 @@ fn main() {
     let mut input = String::new();
 
     stdin.read_line(&mut input).unwrap();
-    let entries = Entry::from_string(&input).expect("invalid input");
+    let entries = Entry::from_string(&input.trim()).expect("invalid input");
 
+    input.clear();
     stdin.read_line(&mut input).unwrap();
-    let k: usize = input.parse().expect("not a number, or not in 0 to 2^64");
+    // let len = input.len();
+    // println!("{input} {len}");
+    let k: usize = input
+        .trim()
+        .parse()
+        .expect("not a number, or not in 0 to 2^64");
+
+    let count = greedy(&entries, k);
+    println!("{count}");
 
     // Log brute-force result (max matches and number of solutions)
-    let (bf_matches, bf_solutions) = brute_force(entries.clone(), k);
-    eprintln!(
-        "brute_force matches: {:?}, solutions: {:?}",
-        bf_matches, bf_solutions
-    );
-
-    let count = greedy(entries, k);
-    println!("{count}");
+    // println!("Bruteforcing");
+    // let (bf_matches, bf_solutions) = brute_force(entries.clone(), k);
+    // println!(
+    //     "brute_force matches: {:?}, solutions: {:?}",
+    //     bf_matches, bf_solutions
+    // );
 }
 
 #[cfg(test)]
@@ -136,7 +143,7 @@ mod tests {
     fn assert_matches(input: &str, k: usize, expected: u64) {
         let entries: Vec<Entry> = Entry::from_string(input).unwrap();
         let (bf_matches, _) = brute_force(entries.clone(), k);
-        let greedy_matches: u64 = greedy(entries, k);
+        let greedy_matches: u64 = greedy(&entries, k);
 
         assert_eq!(
             greedy_matches, bf_matches,
