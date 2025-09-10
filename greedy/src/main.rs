@@ -81,6 +81,53 @@ fn brute_force(entries: Vec<Entry>, k: usize) -> (u64, u64) {
     dfs(entries, k)
 }
 
+// (count, solution)
+fn brute_force2(entries: Vec<Entry>, k: usize) -> (u64, u64) {
+    fn inner(left: Vec<Entry>, k: usize) -> (u64, u64) {
+        if left.is_empty() || left.iter().all(|it| it.clone() == Entry::Empty) {
+            return (0, 1);
+        }
+
+        let len = left.len();
+        let first = left[0];
+        let mut s: Vec<(u64, u64)> = vec![];
+
+        // skip
+        let skipped = left[1..].to_vec();
+        let skipped_ans = inner(skipped, k);
+        s.push(skipped_ans);
+
+        // try to match
+        for i in 1..=k {
+            if i >= len {
+                break;
+            }
+            if first.match_pair(left[i]) {
+                let mut skipped = left[1..].to_vec();
+                skipped[i - 1] = Entry::Empty;
+                let (count, solution) = inner(skipped, k);
+                s.push((count + 1, solution));
+            }
+        }
+
+        // only those with highest count
+        let max_count = s
+            .iter()
+            .map(|it| it.0)
+            .fold(0, |acc, curr| if curr > acc { curr } else { acc });
+
+        let solution: u64 = s
+            .iter()
+            .filter(|(count, _)| *count == max_count)
+            .map(|(_, solution)| solution.clone())
+            .sum();
+
+        (max_count, solution as u64)
+    }
+
+    inner(entries, k)
+}
+
 fn greedy(entries: &Vec<Entry>, k: usize) -> u64 {
     let mut entries: Vec<Entry> = entries.clone();
     let mut count = 0;
@@ -126,9 +173,9 @@ fn main() {
     let count = greedy(&entries, k);
     println!("{count}");
 
-    // Log brute-force result (max matches and number of solutions)
+    // // Log brute-force result (max matches and number of solutions)
     // println!("Bruteforcing");
-    // let (bf_matches, bf_solutions) = brute_force(entries.clone(), k);
+    // let (bf_matches, bf_solutions) = brute_force2(entries.clone(), k);
     // println!(
     //     "brute_force matches: {:?}, solutions: {:?}",
     //     bf_matches, bf_solutions
@@ -137,12 +184,11 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use crate::brute_force;
-    use crate::{Entry, greedy};
+    use crate::{Entry, brute_force2, greedy};
 
     fn assert_matches(input: &str, k: usize, expected: u64) {
         let entries: Vec<Entry> = Entry::from_string(input).unwrap();
-        let (bf_matches, _) = brute_force(entries.clone(), k);
+        let (bf_matches, _) = brute_force2(entries.clone(), k);
         let greedy_matches: u64 = greedy(&entries, k);
 
         assert_eq!(
