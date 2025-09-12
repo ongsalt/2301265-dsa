@@ -32,6 +32,30 @@ function bottomUp(amount: number, coinTypes: number[]): number[] {
   return solutions[amount];
 }
 
+function bottomUpAll(amount: number, coinTypes: number[]) {
+  const solutions: number[][][] = [[[]]];
+
+  for (let a = 1; a <= amount; a++) {
+    let s: number[][] = [];
+    for (const coin of coinTypes) {
+      const rest = a - coin;
+      const restSolutions = solutions[rest];
+
+      if (rest == 0) {
+        s.push([coin]);
+        break;
+      }
+      if (rest > 0) {
+        s.push(...restSolutions.map(s => ([...s, coin])));
+      }
+    }
+    solutions.push(s);
+  }
+
+  return solutions[amount];
+}
+
+
 const getMinimum = memo((amount: number, coinTypes: number[]): number[] => {
   let minimum: number[] | null = null;
   for (const coin of coinTypes) {
@@ -73,7 +97,9 @@ const getAll = memo((amount: number, coinTypes: number[]): number[][] => {
 const { amount, coinTypes } = await parse("./testcases/5.14.txt");
 
 console.log(bottomUp(amount, coinTypes));
-console.log(getMinimum(amount, coinTypes));
-console.log(getAll(amount, coinTypes));
+console.log(bottomUpAll(amount, coinTypes));
+
+// console.log(getMinimum(amount, coinTypes));
+// console.log(getAll(amount, coinTypes));
 
 export { };
