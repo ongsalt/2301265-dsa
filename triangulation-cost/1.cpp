@@ -31,17 +31,6 @@ struct Point {
   int64_t y;
 };
 
-struct TriangleVertexesIndex {
-  uint64_t a;
-  uint64_t b;
-  uint64_t c;
-};
-
-struct PolygonVertexesIndex {
-  uint64_t start;
-  uint64_t end;
-};
-
 auto findDistance(Point p1, Point p2) -> double_t {
   double_t dx = static_cast<double_t>(p1.x - p2.x);
   double_t dy = static_cast<double_t>(p1.y - p2.y);
@@ -52,7 +41,7 @@ auto getPerimeter(Point p1, Point p2, Point p3) {
   return findDistance(p1, p2) + findDistance(p1, p3) + findDistance(p2, p3);
 }
 
-// well we can just pipe it in
+// well we can just pipe it in instead
 // std::vector<Point> parse(const std::string path) {}
 
 auto getInput() -> std::vector<Point> {
@@ -88,8 +77,13 @@ auto getMinimumTriangulationCost(
 
   auto cached = cache.get(start, end);
   if (cached != -1) {
-    // std::println("{}cache hit: ({}, {}) = {}",
-    //              std::string(indentation * 2, ' '), start, end, cached);
+    // std::println(
+    //   "{}cache hit: ({}, {}) = {}",
+    //   std::string(indentation * 2, ' '),
+    //   start,
+    //   end,
+    //   cached
+    // );
     return cached;
   }
 
@@ -97,9 +91,14 @@ auto getMinimumTriangulationCost(
   for (uint64_t i = start + 1; i < end; i++) {
     auto triangulationCost =
       getPerimeter(points[start], points[i], points[end]);
-    // std::println("{}perimeter({}, {}, {}) = {}",
-    //              std::string(indentation * 2, ' '), start, i, end,
-    //              triangulationCost);
+    // std::println(
+    //   "{}perimeter({}, {}, {}) = {}",
+    //   std::string(indentation * 2, ' '),
+    //   start,
+    //   i,
+    //   end,
+    //   triangulationCost
+    // );
 
     minimumCost = std::min(
       minimumCost,
@@ -110,9 +109,13 @@ auto getMinimumTriangulationCost(
   }
 
   cache.set(start, end, minimumCost);
-  // std::println("{}getMinimumTriangulationCost({}, {}) = {}",
-  // std::string(indentation * 2, ' '),
-  //              start, end, minimumCost);
+  // std::println(
+  //   "{}getMinimumTriangulationCost({}, {}) = {}",
+  //   std::string(indentation * 2, ' '),
+  //   start,
+  //   end,
+  //   minimumCost
+  // );
 
   return minimumCost;
 }
