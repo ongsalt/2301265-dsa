@@ -5,51 +5,46 @@
 #include <limits>
 #include <print>
 #include <span>
-#include <string>
 #include <vector>
-
-typedef int64_t i64;
-typedef uint64_t u64;
-typedef double_t f64;
 
 class PolygonCostCache {
  private:
-  std::vector<f64> cache;
-  u64 vertexCount;
+  std::vector<double_t> cache;
+  uint64_t vertexCount;
 
  public:
-  PolygonCostCache(u64 vertexCount)
+  PolygonCostCache(uint64_t vertexCount)
       : cache(vertexCount * vertexCount, -1.0), vertexCount(vertexCount) {
   }
 
-  auto get(u64 start, u64 end) {
+  auto get(uint64_t start, uint64_t end) {
     return cache[start * vertexCount + end];
   }
 
-  auto set(u64 start, u64 end, f64 value) {
+  auto set(uint64_t start, uint64_t end, double_t value) {
     cache[start * vertexCount + end] = value;
   }
 };
 
 struct Point {
-  i64 x;
-  i64 y;
+  int64_t x;
+  int64_t y;
 };
 
 struct TriangleVertexesIndex {
-  u64 a;
-  u64 b;
-  u64 c;
+  uint64_t a;
+  uint64_t b;
+  uint64_t c;
 };
 
 struct PolygonVertexesIndex {
-  u64 start;
-  u64 end;
+  uint64_t start;
+  uint64_t end;
 };
 
-auto findDistance(Point p1, Point p2) -> f64 {
-  f64 dx = static_cast<f64>(p1.x - p2.x);
-  f64 dy = static_cast<f64>(p1.y - p2.y);
+auto findDistance(Point p1, Point p2) -> double_t {
+  double_t dx = static_cast<double_t>(p1.x - p2.x);
+  double_t dy = static_cast<double_t>(p1.y - p2.y);
   return std::sqrt(dx * dx + dy * dy);
 }
 
@@ -61,15 +56,15 @@ auto getPerimeter(Point p1, Point p2, Point p3) {
 // std::vector<Point> parse(const std::string path) {}
 
 auto getInput() -> std::vector<Point> {
-  u64 n;
+  uint64_t n;
   std::cin >> n;
 
   // Assumption: points order = outline
   // wait, THIS MUST BE TRUE
   std::vector<Point> points;
   points.reserve(n);
-  for (u64 i = 0; i < n; i++) {
-    i64 x, y;
+  for (uint64_t i = 0; i < n; i++) {
+    int64_t x, y;
     std::cin >> x >> y;
     points.push_back(Point{ x, y });
   }
@@ -82,12 +77,11 @@ auto getInput() -> std::vector<Point> {
 // ok mf, this is just brute force with extra step
 auto getMinimumTriangulationCost(
   std::span<const Point> points,
-  u64 start,
-  u64 end,
-  // std::map<TriangleVertexesIndex, f64> &triangleCache,
+  uint64_t start,
+  uint64_t end,
   PolygonCostCache& cache,
-  u64 indentation = 0
-) -> f64 {
+  uint64_t indentation = 0
+) -> double_t {
   if (end - start < 2) {
     return 0.0;
   }
@@ -99,8 +93,8 @@ auto getMinimumTriangulationCost(
     return cached;
   }
 
-  auto minimumCost = std::numeric_limits<f64>::max();
-  for (u64 i = start + 1; i < end; i++) {
+  auto minimumCost = std::numeric_limits<double_t>::max();
+  for (uint64_t i = start + 1; i < end; i++) {
     auto triangulationCost =
       getPerimeter(points[start], points[i], points[end]);
     // std::println("{}perimeter({}, {}, {}) = {}",
@@ -131,7 +125,7 @@ int main() {
 
   auto span = std::span(points);
 
-  // auto triangleCache = std::map<TriangleVertexesIndex, f64>();
+  // auto triangleCache = std::map<TriangleVertexesIndex, double_t>();
   auto cache = PolygonCostCache(points.size());
 
   auto cost = getMinimumTriangulationCost(span, 0, points.size() - 1, cache);
