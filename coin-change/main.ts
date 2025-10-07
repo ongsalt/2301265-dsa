@@ -29,6 +29,7 @@ function bottomUp(amount: number, coinTypes: number[]): number[] {
     solutions.push(best);
   }
 
+  // console.log(solutions)
   return solutions[amount];
 }
 
@@ -96,7 +97,7 @@ const getAll = memo((amount: number, coinTypes: number[]): number[][] => {
 
 const { amount, coinTypes } = await parse("./testcases/5.14.txt");
 
-console.log(bottomUp(amount, coinTypes));
+// console.log(bottomUp(amount, coinTypes));
 console.log(bottomUpAll(amount, coinTypes));
 
 // console.log(getMinimum(amount, coinTypes));
