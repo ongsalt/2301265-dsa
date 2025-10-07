@@ -13,15 +13,18 @@ typedef uint64_t u64;
 typedef double_t f64;
 
 class PolygonCostCache {
-private:
+ private:
   std::vector<f64> cache;
   u64 vertexCount;
 
-public:
+ public:
   PolygonCostCache(u64 vertexCount)
-      : cache(vertexCount * vertexCount, -1.0), vertexCount(vertexCount) {}
+      : cache(vertexCount * vertexCount, -1.0), vertexCount(vertexCount) {
+  }
 
-  auto get(u64 start, u64 end) { return cache[start * vertexCount + end]; }
+  auto get(u64 start, u64 end) {
+    return cache[start * vertexCount + end];
+  }
 
   auto set(u64 start, u64 end, f64 value) {
     cache[start * vertexCount + end] = value;
@@ -78,10 +81,13 @@ auto getInput() -> std::vector<Point> {
 // > Time Complexity: O(2n)
 // ok mf, this is just brute force with extra step
 auto getMinimumTriangulationCost(
-    std::span<const Point> points, u64 start, u64 end,
-    // std::map<TriangleVertexesIndex, f64> &triangleCache,
-    PolygonCostCache &cache, u64 indentation = 0) -> f64 {
-
+  std::span<const Point> points,
+  u64 start,
+  u64 end,
+  // std::map<TriangleVertexesIndex, f64> &triangleCache,
+  PolygonCostCache& cache,
+  u64 indentation = 0
+) -> f64 {
   if (end - start < 2) {
     return 0.0;
   }
@@ -96,17 +102,17 @@ auto getMinimumTriangulationCost(
   auto minimumCost = std::numeric_limits<f64>::max();
   for (u64 i = start + 1; i < end; i++) {
     auto triangulationCost =
-        getPerimeter(points[start], points[i], points[end]);
+      getPerimeter(points[start], points[i], points[end]);
     // std::println("{}perimeter({}, {}, {}) = {}",
     //              std::string(indentation * 2, ' '), start, i, end,
     //              triangulationCost);
 
     minimumCost = std::min(
-        minimumCost, triangulationCost +
-                         getMinimumTriangulationCost(points, start, i, cache,
-                                                     indentation + 1) +
-                         getMinimumTriangulationCost(points, i, end, cache,
-                                                     indentation + 1));
+      minimumCost,
+      triangulationCost +
+        getMinimumTriangulationCost(points, start, i, cache, indentation + 1) +
+        getMinimumTriangulationCost(points, i, end, cache, indentation + 1)
+    );
   }
 
   cache.set(start, end, minimumCost);
@@ -124,6 +130,7 @@ int main() {
   }
 
   auto span = std::span(points);
+
   // auto triangleCache = std::map<TriangleVertexesIndex, f64>();
   auto cache = PolygonCostCache(points.size());
 

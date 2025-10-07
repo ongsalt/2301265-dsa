@@ -5,13 +5,13 @@
 typedef unsigned long long int u64;
 
 typedef struct {
-  u64 *data;
+  u64* data;
   u64 size;
   u64 capacity;
 } IntArray;
 
 // Global sieve cache
-static bool *cached_sieve = NULL;
+static bool* cached_sieve = NULL;
 static u64 cached_size = 0;
 
 void ensure_sieve(u64 n) {
@@ -44,7 +44,7 @@ IntArray createArray(u64 capacity) {
   return arr;
 }
 
-void pushArray(IntArray *arr, u64 value) {
+void pushArray(IntArray* arr, u64 value) {
   if (arr->size >= arr->capacity) {
     arr->capacity *= 2;
     arr->data = realloc(arr->data, arr->capacity * sizeof(u64));
@@ -77,7 +77,7 @@ IntArray findCommon(IntArray a, IntArray b) {
   IntArray result = createArray(32);
 
   // Simple approach: for each element in a, find it in b and remove it
-  u64 *used = calloc(b.size, sizeof(u64));
+  u64* used = calloc(b.size, sizeof(u64));
 
   for (u64 i = 0; i < a.size; i++) {
     for (u64 j = 0; j < b.size; j++) {
@@ -129,26 +129,46 @@ int main() {
   printf("gcd(6531741823,8795491761) = %llu\n", gcd(6531741823, 8795491761));
   printf("gcd(5865583711,9535851393) = %llu\n", gcd(5865583711, 9535851393));
   printf("gcd(6954464645,8017257569) = %llu\n", gcd(6954464645, 8017257569));
-  printf("gcd(84184418245,65310172575) = %llu\n",
-         gcd(84184418245, 65310172575));
-  printf("gcd(58659151391,85756451391) = %llu\n",
-         gcd(58659151391, 85756451391));
-  printf("gcd(57564301725,74851857673) = %llu\n",
-         gcd(57564301725, 74851857673));
-  printf("gcd(59917672487,88512663377) = %llu\n",
-         gcd(59917672487, 88512663377));
-  printf("gcd(65315344641,98418485851) = %llu\n",
-         gcd(65315344641, 98418485851));
-  printf("gcd(789176724879,659151396733) = %llu\n",
-         gcd(789176724879, 659151396733));
-  printf("gcd(659117416437,946585181391) = %llu\n",
-         gcd(659117416437, 946585181391));
-  printf("gcd(653184188245,758331017965) = %llu\n",
-         gcd(653184188245, 758331017965));
-  printf("gcd(841818235337,767318488245) = %llu\n",
-         gcd(841818235337, 767318488245));
-  printf("gcd(953525754641,658518571823) = %llu\n",
-         gcd(953525754641, 658518571823));
+  printf(
+    "gcd(84184418245,65310172575) = %llu\n",
+    gcd(84184418245, 65310172575)
+  );
+  printf(
+    "gcd(58659151391,85756451391) = %llu\n",
+    gcd(58659151391, 85756451391)
+  );
+  printf(
+    "gcd(57564301725,74851857673) = %llu\n",
+    gcd(57564301725, 74851857673)
+  );
+  printf(
+    "gcd(59917672487,88512663377) = %llu\n",
+    gcd(59917672487, 88512663377)
+  );
+  printf(
+    "gcd(65315344641,98418485851) = %llu\n",
+    gcd(65315344641, 98418485851)
+  );
+  printf(
+    "gcd(789176724879,659151396733) = %llu\n",
+    gcd(789176724879, 659151396733)
+  );
+  printf(
+    "gcd(659117416437,946585181391) = %llu\n",
+    gcd(659117416437, 946585181391)
+  );
+  printf(
+    "gcd(653184188245,758331017965) = %llu\n",
+    gcd(653184188245, 758331017965)
+  );
+  printf(
+    "gcd(841818235337,767318488245) = %llu\n",
+    gcd(841818235337, 767318488245)
+  );
+  printf(
+    "gcd(953525754641,658518571823) = %llu\n",
+    gcd(953525754641, 658518571823)
+  );
 
   if (cached_sieve)
     free(cached_sieve);
