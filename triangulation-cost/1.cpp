@@ -71,7 +71,7 @@ auto getInput() -> std::vector<Point> {
   for (u64 i = 0; i < n; i++) {
     i64 x, y;
     std::cin >> x >> y;
-    points.push_back(Point{x, y});
+    points.push_back(Point{ x, y });
   }
 
   return points;

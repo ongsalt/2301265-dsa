@@ -8,3 +8,4 @@ AllowShortIfStatementsOnASingleLine: Never
 AllowShortBlocksOnASingleLine: Never
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowAllArgumentsOnNextLine: false
+Cpp11BracedListStyle: false
