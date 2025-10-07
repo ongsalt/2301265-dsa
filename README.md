@@ -1,15 +1,6 @@
-# alg
+# Common gcc flag
+`-std=c++23 -lstdc++exp -g`
 
-To install dependencies:
-
-```bash
-bun install
-```
-
-To run:
-
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.2.18. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+## Why
+- `-lstdc++exp`: `std::print` dont work on windows if we dont pass this. Its seem like clang automatically do this tho.
+- `-g` with debug info
