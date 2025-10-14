@@ -1,12 +1,29 @@
+use rand::seq::SliceRandom;
 use std::io;
+// use std::time::Instant;
 
-fn main() {
-    let mut n = String::new();
-    io::stdin().read_line(&mut n).expect("Failed to read line");
+// mod gpu;
 
-    let n = n.trim().parse::<u64>().expect("Must be positive integer") + 1;
+fn check(seq: Vec<u32>) -> bool {
+    let n = seq.len();
 
-    let mut seq: Vec<u64> = vec![0, 2, 1];
+    // all length 3 subsequences
+    for i in 0..n {
+        for j in (i + 1)..n {
+            for k in (j + 1)..n {
+                if seq[i] + seq[k] == seq[j] * 2 {
+                    println!(" {} {} {} at {i} {j} {k}", seq[i], seq[j], seq[k]);
+                    return false;
+                }
+            }
+        }
+    }
+
+    true
+}
+
+fn solve(n: u32) -> Vec<u32> {
+    let mut seq: Vec<u32> = vec![0, 2, 1];
     while seq.len() < n as usize {
         seq = seq
             .iter()
@@ -15,16 +32,68 @@ fn main() {
             .collect()
     }
 
-    seq = seq.into_iter().filter(|it: &u64| *it < n).collect();
+    seq.into_iter().filter(|it: &u32| *it < n).collect()
+}
 
-    println!(
-        "{}",
-        seq.iter()
-            .map(|n| n.to_string())
-            .reduce(|a, b| format!("{a} {b}"))
-            .unwrap()
-    );
-    // println!("{:.?}", out.len());
+fn solve_optimized(n: u32) -> Vec<u32> {
+    let mut p = 3;
+    while p < n {
+        p *= 2
+    }
+
+    let mut seq = vec![0u32; p as usize];
+
+    let mut size = 3;
+    seq[0] = 0;
+    seq[1] = 2;
+    seq[2] = 1;
+
+    while size < n as usize {
+        for i in 0..size {
+            seq[i] *= 2;
+            seq[i + size] = seq[i] + 1;
+        }
+
+        size *= 2;
+    }
+
+    seq.into_iter().filter(|it: &u32| *it < n).collect()
+}
+
+fn brute_force(n: u32) -> Vec<u32> {
+    let mut seq: Vec<u32> = (0..n).collect();
+    let mut rng = rand::rng();
+    let mut attempts = 0;
+
+    loop {
+        attempts += 1;
+        if check(seq.clone()) {
+            println!("Found solution after {} attempts", attempts);
+            return seq;
+        }
+        seq.shuffle(&mut rng);
+    }
+}
+
+fn main() {
+    let mut n = String::new();
+    io::stdin().read_line(&mut n).expect("Failed to read line");
+
+    let n = n.trim().parse::<u32>().expect("Must be positive integer") + 1;
+
+    // Or use GPU version
+    // failed, probably because wsl
+    // let seq = pollster::block_on(gpu::solve_gpu(n));
+
+    let seq = solve_optimized(n);
+
+    for i in seq {
+        print!("{i} ");
+    }
+
+    // if !check(seq) {
+    //     println!("failed");
+    // }
 }
 
 /*
