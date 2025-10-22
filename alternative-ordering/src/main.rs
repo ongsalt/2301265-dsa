@@ -60,6 +60,10 @@ fn solve_optimized(n: u32) -> Vec<u32> {
     seq.into_iter().filter(|it: &u32| *it < n).collect()
 }
 
+fn solve_3(n: u32) {
+    (0, 2, 1);
+}
+
 fn brute_force(n: u32) -> Vec<u32> {
     let mut seq: Vec<u32> = (0..n).collect();
     let mut rng = rand::rng();
@@ -117,6 +121,8 @@ condition for any 3 numbers a b c: a < b < c -> if 2 * b == (a + c) then b must 
 n = 11
 0 8 4 2 10 6 1 9 5 3 7 11
 
+
+
 0 2 1 3
 
 n = 23
@@ -124,4 +130,5 @@ n = 23
 
 
 bruh, its working
+
 */

@@ -10,7 +10,7 @@ bool check(unsigned int* seq, size_t n) {
     for (size_t j = i + 1; j < n; j++) {
       for (size_t k = j + 1; k < n; k++) {
         if (seq[i] + seq[k] == seq[j] * 2) {
-          printf(" %u %u %u at %zu %zu %zu\n", seq[i], seq[j], seq[k], i, j, k);
+          printf("%u %u %u at %zu %zu %zu\n", seq[i], seq[j], seq[k], i, j, k);
           return false;
         }
       }
