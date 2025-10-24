@@ -48,17 +48,39 @@ function solveInner<T>(lps: number[], pattern: T[], text: T[]) {
     return founded;
 }
 
+function naive<T>(pattern: T[], text: T[]) {
+    const founded: number[] = []
+    for (let i = 0; i < text.length; i++) {
+        let ok = true
+        for (let j = 0; j < pattern.length; j++) {
+            if (pattern[j] !== text[i + j]) {
+                ok = false
+                break
+            }
+        }
+        if (ok) {
+            founded.push(i)
+        }
+    }
+
+    return founded;
+}
+
 function solve<T>(pattern: T[], text: T[]) {
     const lps = buildLps(pattern);
+    const lps2 = buildLps(pattern.toReversed());
 
     const lr = solveInner(lps, pattern, text).map(it => it + 1);
-    const rl = solveInner(lps, pattern.toReversed(), text).map(it => it + pattern.length);
+    const rl = solveInner(lps2, pattern.toReversed(), text).map(it => it + pattern.length);
+    const wrap = solveInner(lps, pattern, text.concat(text.toReversed())).map(it => it + 1);
+    // const lr = naive(pattern, text).map(it => it + 1);
+    // const rl = naive(pattern.toReversed(), text).map(it => it + pattern.length);
 
-    return { rl, lr, lps }
+    return { rl, lr, lps, wrap }
 }
 
 function run(pattern: string, text: string) {
-    const { lps, lr, rl } = solve(pattern.split(" "), text.split(" "))
+    const { lps, lr, rl, wrap } = solve(pattern.split(" "), text.split(" "))
 
     console.log(lps.join(" "))
     console.log(rl.length + lr.length);
@@ -68,6 +90,10 @@ function run(pattern: string, text: string) {
     for (const index of rl) {
         console.log(index, "RL")
     }
+
+    for (const index of lr) {
+        console.log(index, "WA")
+    }
 }
 
 function parse(content: string) {
@@ -75,7 +101,7 @@ function parse(content: string) {
     return { pattern: pattern!, text: text! }
 }
 
-const content = await Bun.file("./testcases/8.2.txt").text()
+const content = await Bun.file("./testcases/8.4.txt").text()
 const { pattern, text } = parse(content)
 
 run(pattern, text)
