@@ -4,7 +4,7 @@ use std::io;
 
 // mod gpu;
 
-fn check(seq: Vec<u32>) -> bool {
+fn check(seq: Vec<i64>) -> bool {
     let n = seq.len();
 
     // all length 3 subsequences
@@ -12,7 +12,7 @@ fn check(seq: Vec<u32>) -> bool {
         for j in (i + 1)..n {
             for k in (j + 1)..n {
                 if seq[i] + seq[k] == seq[j] * 2 {
-                    println!(" {} {} {} at {i} {j} {k}", seq[i], seq[j], seq[k]);
+                    println!("{} {} {} at {i} {j} {k}", seq[i], seq[j], seq[k]);
                     return false;
                 }
             }
@@ -22,8 +22,8 @@ fn check(seq: Vec<u32>) -> bool {
     true
 }
 
-fn solve(n: u32) -> Vec<u32> {
-    let mut seq: Vec<u32> = vec![0, 2, 1];
+fn solve(n: i64) -> Vec<i64> {
+    let mut seq: Vec<i64> = vec![0, 2, 1];
     while seq.len() < n as usize {
         seq = seq
             .iter()
@@ -32,16 +32,18 @@ fn solve(n: u32) -> Vec<u32> {
             .collect()
     }
 
-    seq.into_iter().filter(|it: &u32| *it < n).collect()
+    seq.into_iter().filter(|it: &i64| *it < n).collect()
 }
 
-fn solve_optimized(n: u32) -> Vec<u32> {
+fn big_brain(n: i64) -> Vec<i64> {
+    let n = n + 1;
     let mut p = 3;
     while p < n {
+        // log n
         p *= 2
     }
 
-    let mut seq = vec![0u32; p as usize];
+    let mut seq = vec![0; p as usize];
 
     let mut size = 3;
     seq[0] = 0;
@@ -49,6 +51,7 @@ fn solve_optimized(n: u32) -> Vec<u32> {
     seq[2] = 1;
 
     while size < n as usize {
+        // total of 2n (geometric sum)
         for i in 0..size {
             seq[i] *= 2;
             seq[i + size] = seq[i] + 1;
@@ -57,15 +60,34 @@ fn solve_optimized(n: u32) -> Vec<u32> {
         size *= 2;
     }
 
-    seq.into_iter().filter(|it: &u32| *it < n).collect()
+    seq.into_iter().filter(|it| *it < n).collect()
 }
 
-fn solve_3(n: u32) {
-    (0, 2, 1);
+fn solve_divide_and_conquer(n: i64) -> Vec<i64> {
+    // consume becuase its unused anyway
+    fn inner(slice: Vec<i64>) -> Vec<i64> {
+        if slice.len() <= 2 {
+            return slice.clone();
+        }
+
+        let (even, odd) = slice.iter().partition::<Vec<i64>, _>(|it| *it % 2 == 0);
+
+        // scale down
+        let e2 = even.iter().map(|i: &i64| i / 2).collect();
+        let o2 = odd.iter().map(|i| (i - 1) / 2).collect();
+
+        // process and scale back
+        let e3 = inner(e2).into_iter().map(|i| i * 2);
+        let o3 = inner(o2).into_iter().map(|i| i * 2 + 1);
+
+        e3.chain(o3).collect()
+    }
+
+    inner((0..=n).collect())
 }
 
-fn brute_force(n: u32) -> Vec<u32> {
-    let mut seq: Vec<u32> = (0..n).collect();
+fn brute_force(n: i64) -> Vec<i64> {
+    let mut seq: Vec<i64> = (0..n).collect();
     let mut rng = rand::rng();
     let mut attempts = 0;
 
@@ -83,21 +105,22 @@ fn main() {
     let mut n = String::new();
     io::stdin().read_line(&mut n).expect("Failed to read line");
 
-    let n = n.trim().parse::<u32>().expect("Must be positive integer") + 1;
+    let n = n.trim().parse::<i64>().expect("Must be positive integer");
 
     // Or use GPU version
     // failed, probably because wsl
     // let seq = pollster::block_on(gpu::solve_gpu(n));
 
-    let seq = solve_optimized(n);
+    let seq = solve_divide_and_conquer(n as i64);
 
-    for i in seq {
+    for i in &seq {
         print!("{i} ");
     }
+    println!();
 
-    // if !check(seq) {
-    //     println!("failed");
-    // }
+    if !check(seq) {
+        println!("failed");
+    }
 }
 
 /*
@@ -112,6 +135,7 @@ fn main() {
 0 2 1 3
 0 4 2 1 3
 0 4 2 1 5 3
+
 
 (0 4 2) + (1, 1, 1) = (1 5 3)
 
