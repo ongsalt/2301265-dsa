@@ -7,12 +7,12 @@
 const int NO_PATH = 1e9;
 const int NO_SOUND = -1e9;
 
-struct Options {
+struct Params {
   std::vector<std::vector<int>> graph;
   std::vector<std::pair<int, int>> queries;
 };
 
-Options getInput() {
+Params getAndParseInput() {
   int vertexCount, edgeCount, queryCount;
 
   std::cin >> vertexCount >> edgeCount >> queryCount;
@@ -64,7 +64,6 @@ std::vector<std::vector<int>> findMinimumLoudness(
         auto former_half = minimumLoudness[i][k];
         auto latter_half = minimumLoudness[k][j];
         auto l = NO_PATH;
-
         if (former_half != NO_PATH && latter_half != NO_PATH) {
           l = std::max(former_half, latter_half);
         }
@@ -79,7 +78,7 @@ std::vector<std::vector<int>> findMinimumLoudness(
   return minimumLoudness;
 }
 
-void print(std::vector<std::vector<int>>& graph) {
+void printGraph(std::vector<std::vector<int>>& graph) {
   for (auto r : graph) {
     for (auto c : r) {
       if (c == NO_PATH || c == NO_SOUND) {
@@ -93,16 +92,16 @@ void print(std::vector<std::vector<int>>& graph) {
 }
 
 int main() {
-  auto opts = getInput();
-  auto minimumLoudness = findMinimumLoudness(opts.graph);
+  auto params = getAndParseInput();
+  auto minimumLoudness = findMinimumLoudness(params.graph);
 
-  // print(opts.graph);
+  // printGraph(params.graph);
   // std::cout << std::endl;
-  // print(minimumLoudness);
+  // printGraph(minimumLoudness);
 
-  for (auto [i, j] : opts.queries) {
-    auto l = minimumLoudness[i][j];
-    std::cout << (l == NO_PATH ? "no path" : std::to_string(l)) << std::endl;
+  for (auto [i, j] : params.queries) {
+    auto loudness = minimumLoudness[i][j];
+    std::cout << (loudness == NO_PATH ? "no path" : std::to_string(loudness)) << std::endl;
   }
 
   return 0;
