@@ -108,7 +108,7 @@ function parse(content: string) {
     return { pattern: pattern!, text: text! };
 }
 
-const content = await Bun.file("./testcases/8.7.txt").text();
+const content = await Bun.file("./testcases/8.3.txt").text();
 const { pattern, text } = parse(content);
 
 run(pattern, text)

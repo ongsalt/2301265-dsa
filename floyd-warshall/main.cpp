@@ -95,9 +95,9 @@ int main() {
   auto params = getAndParseInput();
   auto minimumLoudness = findMinimumLoudness(params.graph);
 
-  // printGraph(params.graph);
-  // std::cout << std::endl;
-  // printGraph(minimumLoudness);
+  printGraph(params.graph);
+  std::cout << std::endl;
+  printGraph(minimumLoudness);
 
   for (auto [i, j] : params.queries) {
     auto loudness = minimumLoudness[i][j];

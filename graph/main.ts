@@ -10,7 +10,7 @@ function isReachable(graph: boolean[][]) {
   const next: number[] = [0];
 
   const visited = Array.from({ length: graph.length }, () => false);
-  const components = Array.from({ length: graph.length }, () => -1);
+  const components = Array.from({ length: graph.length }, (index) => -1);
   const l: number[] = [];
   // visited[0] = true;
 
@@ -41,9 +41,11 @@ function isReachable(graph: boolean[][]) {
     }
   }
 
-  for (const v of l) {
+  for (let v = 0; v < graph.length; v++) {
     assign(v, v);
   }
+
+  outputBuffer.push(components.toString());
 
   // outputBuffer.push(components);
   return components.every(it => it === 0);
