@@ -49,17 +49,17 @@ function solveInner<T>(lps: number[], pattern: T[], text: T[]) {
 }
 
 function naive<T>(pattern: T[], text: T[]) {
-    const founded: number[] = []
+    const founded: number[] = [];
     for (let i = 0; i < text.length; i++) {
-        let ok = true
+        let ok = true;
         for (let j = 0; j < pattern.length; j++) {
             if (pattern[j] !== text[i + j]) {
-                ok = false
-                break
+                ok = false;
+                break;
             }
         }
         if (ok) {
-            founded.push(i)
+            founded.push(i);
         }
     }
 
@@ -72,37 +72,44 @@ function solve<T>(pattern: T[], text: T[]) {
 
     const lr = solveInner(lps, pattern, text).map(it => it + 1);
     const rl = solveInner(lps2, pattern.toReversed(), text).map(it => it + pattern.length);
-    const wrap = solveInner(lps, pattern, text.concat(text.toReversed())).map(it => it + 1);
+    const wrap = solveInner(lps, pattern, text.concat(text)).map(it => (it + 1) % pattern.length);
+    let wrap2 = solveInner(lps2, pattern.toReversed(), text.concat(text)).map(it => (it + pattern.length + 2) % pattern.length);
+    wrap2 = [...new Set(wrap2)]
     // const lr = naive(pattern, text).map(it => it + 1);
     // const rl = naive(pattern.toReversed(), text).map(it => it + pattern.length);
 
-    return { rl, lr, lps, wrap }
+    return { rl, lr, lps, wrap, wrap2 };
 }
 
 function run(pattern: string, text: string) {
-    const { lps, lr, rl, wrap } = solve(pattern.split(" "), text.split(" "))
+    const { lps, lr, rl, wrap, wrap2 } = solve(pattern.split(" "), text.split(" "));
 
-    console.log(lps.join(" "))
+    console.log(lps.join(" "));
     console.log(rl.length + lr.length);
     for (const index of lr) {
-        console.log(index, "LR")
+        console.log(index, "LR");
     }
     for (const index of rl) {
-        console.log(index, "RL")
+        console.log(index, "RL");
     }
 
-    for (const index of lr) {
-        console.log(index, "WA")
+    for (const index of wrap) {
+        console.log(index, "WLR");
     }
+
+    for (const index of wrap2) {
+        console.log(index, "WRL");
+    }
+
 }
 
 function parse(content: string) {
-    const [_, __, pattern, text] = content.split("\n")
-    return { pattern: pattern!, text: text! }
+    const [_, __, pattern, text] = content.split("\n");
+    return { pattern: pattern!, text: text! };
 }
 
-const content = await Bun.file("./testcases/8.4.txt").text()
-const { pattern, text } = parse(content)
+const content = await Bun.file("./testcases/8.7.txt").text();
+const { pattern, text } = parse(content);
 
 run(pattern, text)
 
