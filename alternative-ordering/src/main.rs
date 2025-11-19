@@ -63,7 +63,7 @@ fn big_brain(n: i64) -> Vec<i64> {
     seq.into_iter().filter(|it| *it < n).collect()
 }
 
-fn solve_divide_and_conquer(n: i64) -> Vec<i64> {
+fn solve_divide_and_conquer(slice: Vec<i64>) -> Vec<i64> {
     // consume becuase its unused anyway
     fn inner(slice: Vec<i64>) -> Vec<i64> {
         if slice.len() <= 2 {
@@ -83,7 +83,7 @@ fn solve_divide_and_conquer(n: i64) -> Vec<i64> {
         e3.chain(o3).collect()
     }
 
-    inner((0..=n).collect())
+    inner(slice)
 }
 
 fn brute_force(n: i64) -> Vec<i64> {
@@ -102,16 +102,16 @@ fn brute_force(n: i64) -> Vec<i64> {
 }
 
 fn main() {
-    let mut n = String::new();
-    io::stdin().read_line(&mut n).expect("Failed to read line");
+    let mut buffer = String::new();
+    io::stdin().read_line(&mut buffer).expect("Failed to read line");
+    
+    let n = buffer.trim().parse::<i64>().expect("Must be positive integer");
+    
+    // io::stdin().read_line(&mut buffer).expect("Failed to read line");
+    // let n = buffer.trim().split(" ")
 
-    let n = n.trim().parse::<i64>().expect("Must be positive integer");
-
-    // Or use GPU version
-    // failed, probably because wsl
-    // let seq = pollster::block_on(gpu::solve_gpu(n));
-
-    let seq = solve_divide_and_conquer(n as i64);
+    // let seq = solve_divide_and_conquer((0..=n).collect());
+    let seq = big_brain(n);
 
     for i in &seq {
         print!("{i} ");
