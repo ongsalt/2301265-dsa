@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <iostream>
 #include <ostream>
+#include <stack>
 #include <string>
 #include <vector>
 
@@ -91,17 +92,80 @@ void printGraph(std::vector<std::vector<int>>& graph) {
   }
 }
 
+std::vector<int> findPath(
+  std::vector<std::vector<int>>& graph,
+  int start,
+  int end,
+  int maxLoudness
+) {
+  if (maxLoudness == NO_PATH) {
+    return {};
+  }
+
+  int n = graph.size();
+  std::vector<int> parent(n, -1);
+  std::vector<bool> visited(n, false);
+  std::stack<int> stack;
+
+  stack.push(start);
+  visited[start] = true;
+
+  while (!stack.empty()) {
+    int current = stack.top();
+    stack.pop();
+
+    if (current == end) {
+      std::vector<int> path;
+      int node = end;
+      while (node != -1) {
+        path.push_back(node);
+        node = parent[node];
+      }
+      std::reverse(path.begin(), path.end());
+      return path;
+    }
+
+    for (int neighbor = 0; neighbor < n; neighbor++) {
+      if (!visited[neighbor] && 
+          graph[current][neighbor] != NO_PATH && 
+          graph[current][neighbor] <= maxLoudness) {
+        visited[neighbor] = true;
+        parent[neighbor] = current;
+        stack.push(neighbor);
+      }
+    }
+  }
+
+  return {};
+}
+
 int main() {
   auto params = getAndParseInput();
   auto minimumLoudness = findMinimumLoudness(params.graph);
 
-  printGraph(params.graph);
-  std::cout << std::endl;
-  printGraph(minimumLoudness);
+  // printGraph(params.graph);
+  // std::cout << std::endl;
+  // printGraph(minimumLoudness);
 
   for (auto [i, j] : params.queries) {
     auto loudness = minimumLoudness[i][j];
-    std::cout << (loudness == NO_PATH ? "no path" : std::to_string(loudness)) << std::endl;
+    std::cout << i + 1 << " -> " << j + 1 << " : ";
+    std::cout << (loudness == NO_PATH ? "no path" : std::to_string(loudness))
+              << std::endl;
+
+    auto path = findPath(params.graph, i, j, loudness);
+
+    std::cout << "   ";
+    int index = 0;
+    for (auto node : path) {
+      index += 1;
+      std::cout << node + 1;
+      if (index < path.size()) {
+        std::cout << " -> ";
+      }
+    }
+
+    std::cout << std::endl;
   }
 
   return 0;
